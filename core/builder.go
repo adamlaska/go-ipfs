@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/ipfs/kubo/core/bootstrap"
+	"github.com/ipfs/boxo/bootstrap"
 	"github.com/ipfs/kubo/core/node"
 
 	"github.com/ipfs/go-metrics-interface"
@@ -16,6 +16,8 @@ import (
 )
 
 // FXNodeInfo contains information useful for adding fx options.
+// This is the extension point for providing more info/context to fx plugins
+// to make decisions about what options to include.
 type FXNodeInfo struct {
 	FXOptions []fx.Option
 }
@@ -82,6 +84,7 @@ func NewNode(ctx context.Context, cfg *BuildCfg) (*IpfsNode, error) {
 			return nil, fmt.Errorf("building fx opts: %w", err)
 		}
 	}
+	//nolint:staticcheck // https://github.com/ipfs/kubo/pull/9423#issuecomment-1341038770
 	opts = append(opts, fx.Extract(n))
 
 	app := fx.New(opts...)

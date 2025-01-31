@@ -48,6 +48,29 @@ application without IPC and without forking Kubo.
 Note: We eventually plan to make Kubo usable as a library. However, this
 plugin type is likely the best interim solution.
 
+### fx (experimental)
+
+Fx plugins let you customize the [fx](https://pkg.go.dev/go.uber.org/fx) dependency graph and configuration,
+by customizing the`fx.Option`s that are passed to `fx` when the Kubo node is initialized.
+
+For example, you can override an interface such as [exchange.Interface](https://github.com/ipfs/go-ipfs-exchange-interface)
+or [pin.Pinner](https://github.com/ipfs/go-ipfs-pinner) with a custom implementation by appending an option like
+`fx.Decorate(func() exchange.Interface { return customExchange })`.
+
+Fx supports some advanced customization. Simple interface replacements like above are unlikely to break in the future, 
+but the more invasive your changes, the more likely they are to break between releases. Kubo cannot guarantee backwards
+compatibility for `fx` customizations.
+
+Fx options are applied across every execution of the `ipfs` binary, including:
+
+- Repo initialization
+- Daemon
+- Applying migrations
+- etc.
+
+So if you plug in a blockservice that disallows non-allowlisted CIDs, then this may break migrations
+that fetch migration code over the IPFS network.
+
 ### Internal
 
 (never stable)
